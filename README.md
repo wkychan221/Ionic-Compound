@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKDSE Chemistry: Ionic Bonding Studio v5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col selection:bg-teal-200">
+
+    <header class="bg-white border-b-2 border-slate-200 p-5 shadow-sm flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-black tracking-tight text-teal-600 flex items-center gap-2">
+                <span>⚡</span> HKDSE Chem: Ionic Compound Studio
+            </h1>
+            <p class="text-sm text-slate-500 mt-1 font-medium">Topic II • Microscopic World I • Expanded Periodic Table Matrix Layout Standards</p>
+        </div>
+        <div class="bg-teal-50 border-2 border-teal-200 text-teal-700 px-4 py-1.5 text-sm rounded-md font-mono font-bold shadow-sm">
+            HKDSE Syllabus Compliant
+        </div>
+    </header>
+
+    <div class="bg-white border-b border-slate-200 px-5 flex gap-4">
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="px-5 py-3 text-sm font-bold uppercase tracking-wider border-b-4 border-teal-600 text-teal-600 transition-all">1. Electron Transfer &amp; Diagram Lab</button>
+        <button onclick="switchTab('quiz')" id="tab-quiz" class="px-5 py-3 text-sm font-bold uppercase tracking-wider border-b-4 border-transparent text-slate-500 hover:text-slate-800 transition-all">2. DSE Assessment Suite (20 Tasks)</button>
+    </div>
+
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
+        
+        <div id="panel-simulator" class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
+            <div class="lg:col-span-4 bg-white p-6 rounded-xl border-2 border-slate-200 shadow-sm space-y-6 flex flex-col justify-between">
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-mono text-teal-700 uppercase font-bold mb-2 tracking-wide">Select Metal Cation Source:</label>
+                        <select id="metal-selector" onchange="runSimulation()" class="w-full bg-slate-50 border-2 border-slate-200 rounded-lg p-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-teal-500 font-mono shadow-inner">
+                            <option value="Li">Lithium (Li) - Group I [2, 1]</option>
+                            <option value="Be">Beryllium (Be) - Group II [2, 2]</option>
+                            <option value="Na">Sodium (Na) - Group I [2, 8, 1]</option>
+                            <option value="Mg">Magnesium (Mg) - Group II [2, 8, 2]</option>
+                            <option value="Al">Aluminium (Al) - Group III [2, 8, 3]</option>
+                            <option value="K">Potassium (K) - Group I [2, 8, 8, 1]</option>
+                            <option value="Ca">Calcium (Ca) - Group II [2, 8, 8, 2]</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-teal-700 uppercase font-bold mb-2 tracking-wide">Select Non-Metal Anion Source:</label>
+                        <select id="nonmetal-selector" onchange="runSimulation()" class="w-full bg-slate-50 border-2 border-slate-200 rounded-lg p-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-teal-500 font-mono shadow-inner">
+                            <option value="N">Nitrogen (N) - Group V [2, 5]</option>
+                            <option value="P">Phosphorus (P) - Group V [2, 8, 5]</option>
+                            <option value="O">Oxygen (O) - Group VI [2, 6]</option>
+                            <option value="S">Sulphur (S) - Group VI [2, 8, 6]</option>
+                            <option value="F">Fluorine (F) - Group VII [2, 7]</option>
+                            <option value="Cl">Chlorine (Cl) - Group VII [2, 8, 7]</option>
+                            <option value="Br">Bromine (Br) - Group VII [2, 8, 18, 7]</option>
+                            <option value="I">Iodine (I) - Group VII [2, 8, 18, 18, 7]</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-slate-50 border-2 border-slate-200 p-5 rounded-xl space-y-3 shadow-inner">
+                        <span class="text-xs uppercase font-mono text-slate-500 font-bold block tracking-wider">DSE Predicted Formula &amp; Ratio</span>
+                        <div class="flex justify-between items-center">
+                            <h3 id="txt-predicted-formula" class="text-3xl font-black text-slate-900 font-mono tracking-tight">Li₃N</h3>
+                            <span id="txt-ion-ratio" class="text-sm bg-teal-100 border-2 border-teal-200 px-3 py-1 rounded-md text-teal-800 font-bold font-mono">Ratio 3 : 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-teal-50/60 border-2 border-teal-100 rounded-xl text-sm text-slate-600 space-y-2">
+                    <span class="text-xs font-bold text-teal-700 uppercase tracking-wider block">📋 DSE Structural Guidelines:</span>
+                    <p id="txt-sim-notes" class="leading-relaxed">Metal atoms lose valence electrons to leave an empty outer shell. Large preceding coefficients are displayed when more than one ion is needed to balance net lattice neutrality.</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 bg-white p-6 rounded-xl border-2 border-slate-200 shadow-sm flex flex-col items-center justify-center min-h-[500px] relative">
+                <span class="absolute top-4 left-5 text-xs uppercase font-mono text-slate-400 font-bold tracking-wider">Stable Cation &amp; Anion "Cross-and-Dot" Diagrams with Coefficients</span>
+                
+                <div class="flex flex-col md:flex-row items-center gap-8 w-full justify-center mt-6">
+                    <div class="flex flex-col items-center">
+                        <span id="lbl-cation-name" class="text-base font-mono text-teal-600 font-black mb-3">Lithium ion</span>
+                        <svg id="svg-cation" viewBox="0 0 280 240" class="w-72 h-64 bg-slate-50 border-2 border-slate-200 rounded-xl p-3 shadow-inner"></svg>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span id="lbl-anion-name" class="text-base font-mono text-pink-600 font-black mb-3">Nitride ion</span>
+                        <svg id="svg-anion" viewBox="0 0 280 240" class="w-72 h-64 bg-slate-50 border-2 border-slate-200 rounded-xl p-3 shadow-inner"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-quiz" class="hidden bg-white p-6 rounded-xl border-2 border-slate-200 shadow-sm space-y-6 w-full">
+            <div class="border-b-2 border-slate-100 pb-4 flex justify-between items-center">
+                <div>
+                    <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded border-2 border-amber-200 uppercase tracking-wide">Interactive Exam Board</span>
+                    <h2 class="text-xl font-bold text-slate-900 mt-2">Ionic Bonding &amp; Formula Validation Suite</h2>
+                </div>
+                <span id="quiz-q-index" class="text-sm font-mono bg-slate-50 border-2 border-slate-200 px-3 py-1.5 rounded-lg text-slate-600 font-bold">Question 1 / 20</span>
+            </div>
+
+            <div class="p-5 bg-slate-50 rounded-xl border-2 border-slate-200 shadow-inner space-y-2">
+                <span class="text-xs uppercase font-mono text-amber-700 font-bold block tracking-wider">Scenario Criteria</span>
+                <p id="quiz-question-text" class="text-base md:text-lg font-bold text-slate-800 leading-relaxed">Loading assessment questions...</p>
+            </div>
+
+            <div id="quiz-options-box" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+            <div class="bg-slate-50 border-2 border-slate-200 p-5 rounded-xl">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">DSE Syllabus Solution Pathway Explanation</span>
+                <p id="quiz-feedback" class="text-sm text-slate-600 font-medium italic">Select an answer choice to display structural breakdown.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- DATA ARCHITECTURE DEFINITIONS ---
+        const metalData = {
+            Li: { symbol: "Li", ionName: "Lithium ion", charge: "+", displayValence: 0 },
+            Be: { symbol: "Be", ionName: "Beryllium ion", charge: "2+", displayValence: 0 },
+            Na: { symbol: "Na", ionName: "Sodium ion", charge: "+", displayValence: 0 },
+            Mg: { symbol: "Mg", ionName: "Magnesium ion", charge: "2+", displayValence: 0 },
+            Al: { symbol: "Al", ionName: "Aluminium ion", charge: "3+", displayValence: 0 },
+            K: {  symbol: "K",  ionName: "Potassium ion", charge: "+", displayValence: 0 },
+            Ca: { symbol: "Ca", ionName: "Calcium ion", charge: "2+", displayValence: 0 }
+        };
+
+        const nonmetalData = {
+            N:  { symbol: "N",  ionName: "Nitride ion", charge: "3-", originalElectrons: 5, val: 3 },
+            P:  { symbol: "P",  ionName: "Phosphide ion", charge: "3-", originalElectrons: 5, val: 3 },
+            O:  { symbol: "O",  ionName: "Oxide ion", charge: "2-", originalElectrons: 6, val: 2 },
+            S:  { symbol: "S",  ionName: "Sulphide ion", charge: "2-", originalElectrons: 6, val: 2 },
+            F:  { symbol: "F",  ionName: "Fluoride ion", charge: "-",  originalElectrons: 7, val: 1 },
+            Cl: { symbol: "Cl", ionName: "Chloride ion", charge: "-",  originalElectrons: 7, val: 1 },
+            Br: { symbol: "Br", ionName: "Bromide ion", charge: "-",  originalElectrons: 7, val: 1 },
+            I:  { symbol: "I",  ionName: "Iodide ion", charge: "-",  originalElectrons: 7, val: 1 }
+        };
+
+        // Helper functions to dynamically generate correct HKDSE compound metadata configurations
+        function getValenceCharge(key) {
+            if (["Li", "Na", "K"].includes(key)) return 1;
+            if (["Be", "Mg", "Ca"].includes(key)) return 2;
+            if (key === "Al") return 3;
+            return 1;
+        }
+
+        function getAnionCharge(key) {
+            if (["N", "P"].includes(key)) return 3;
+            if (["O", "S"].includes(key)) return 2;
+            if (["F", "Cl", "Br", "I"].includes(key)) return 1;
+            return 1;
+        }
+
+        function getLcm(a, b) {
+            let max = Math.max(a, b);
+            while (true) {
+                if (max % a === 0 && max % b === 0) return max;
+                max++;
+            }
+        }
+
+        const assessmentDeck = [
+            {
+                q: "1. An atom of element M belongs to Group II of the Periodic Table. It reacts with a Group VII non-metal element X. What is the predicted empirical formula of the resulting ionic compound?",
+                opts: ["MX", "MX₂", "M₂X", "M₃X₂"], correct: 1,
+                explain: "Group II metals lose 2 electrons to form M²⁺ ions. Group VII non-metals gain 1 electron to form X⁻ ions. Balancing the charges requires two X⁻ ions for every one M²⁺ ion, yielding MX₂."
+            },
+            {
+                q: "2. In the correct cross-and-dot electron diagram for Magnesium Oxide (MgO) adhering to standard introductory syllabus parameters, what should the outermost valence shell of the Magnesium ion contain?",
+                opts: ["2 crosses and no dots", "8 crosses and no outer brackets", "No electrons inside square brackets with a 2+ charge outside", "8 dots without brackets"],
+                correct: 2,
+                explain: "Under standard HKDSE introductory configurations, when a metal cation completely empties its outer valence layer, it is represented as a shell with no electrons shown, enclosed in square brackets with its positive oxidation charge outside."
+            },
+            {
+                q: "3. An ion of element A has an electronic configuration of 2, 8 and carries a 3+ charge. Which group of the Periodic Table does element A belong to?",
+                opts: ["Group I", "Group III", "Group V", "Group VIII"], correct: 1,
+                explain: "An ion with a 3+ charge has lost 3 electrons. The neutral atom must have had 2 + 8 + 3 = 13 electrons, placing it in Group III (Aluminium)."
+            },
+            {
+                q: "4. When Aluminium reacts with Oxygen to form Aluminium Oxide, what is the total number of electrons transferred between the atoms in the simplest formula unit?",
+                opts: ["3", "4", "6", "12"], correct: 2,
+                explain: "The formula is Al₂O₃. Each of the two Aluminium atoms loses 3 electrons (6 total), and each of the three Oxygen atoms gains 2 electrons (6 total). Thus, 6 electrons are transferred in total."
+            },
+            {
+                q: "5. An ionic compound contains element Y and Fluorine with a formula of YF₂. What is the electronic arrangement of the valence shell of a neutral atom of Y if its ion has a configuration of 2, 8, 8?",
+                opts: ["2", "7", "8, 2", "8, 7"], correct: 2,
+                explain: "The formula YF₂ implies the ion is Y²⁺. If the Y²⁺ ion has a configuration of 2, 8, 8, the neutral atom must have two more electrons: 2, 8, 8, 2 (Calcium). Its valence shell has 2 electrons."
+            },
+            {
+                q: "6. Which structural feature is shared by both a Nitride ion (N³⁻) and an Oxide ion (O²⁻)?",
+                opts: ["They have the same number of protons", "They have the same number of neutrons", "They have the same electronic configuration (2, 8)", "They carry the same net charge value"],
+                correct: 2,
+                explain: "Both are isoelectronic. Nitrogen (atomic number 7) gains 3 electrons, and Oxygen (atomic number 8) gains 2 electrons. Both form an ion with 10 electrons and a 2, 8 configuration."
+            },
+            {
+                q: "7. Why do ionic compounds conduct electricity in an aqueous state but not in a solid state?",
+                opts: ["Electrons are free to move in solution but locked in solids", "Mobile ions are present in aqueous solutions but fixed in a rigid lattice in solids", "The covalent bonds break down when water is added", "Water molecules act as metallic wires between the ions"],
+                correct: 1,
+                explain: "In the solid state, ions are locked in fixed positions within a giant ionic crystal lattice. When molten or dissolved in water, the lattice breaks down, allowing the ions to move freely and conduct electricity."
+            },
+            {
+                q: "8. An unknown element Q forms an oxide with the formula Q₂O. To which group does element Q belong?",
+                opts: ["Group I", "Group II", "Group III", "Group VI"], correct: 0,
+                explain: "The oxide ion is O²⁻. For the compound to be neutral, the two Q ions must have a combined 2+ charge, meaning each is Q⁺. Group I elements form 1+ cations."
+            },
+            {
+                q: "9. Which diagrammatic rule is essential when drawing a cross-and-dot electron diagram for a non-metal anion in an ionic compound?",
+                opts: ["Only show the electrons that were gained", "Show gained electrons using a different symbol (e.g., dots vs crosses) from the atom's original electrons", "Never draw square brackets around non-metals", "Leave the valence shell empty"],
+                correct: 1,
+                explain: "HKDSE guidelines require using different symbols (dots and crosses) to distinguish the non-metal's original valence electrons from those transferred from the metal atom."
+            },
+            {
+                q: "10. How many electrons are present in the valence shell of a Sulphide ion (S²⁻)?",
+                opts: ["2", "6", "8", "16"], correct: 2,
+                explain: "Sulphur has an atomic number of 16 (configuration 2, 8, 6). Gaining 2 electrons completes its outermost shell, giving the S²⁻ ion a stable octet of 8 electrons."
+            },
+            {
+                q: "11. Element Z is in Period 3 and Group VI. It reacts with Potassium. Predict the formula of the compound formed.",
+                opts: ["KZ", "K₂Z", "KZ₂", "K₃Z₂"], correct: 1,
+                explain: "Group VI elements need 2 electrons, forming Z²⁻ ions. Potassium is in Group I and forms K⁺ ions. Combining them requires two K⁺ ions for every one Z²⁻ ion, giving K₂Z."
+            },
+            {
+                q: "12. Which compound has an ionic crystal lattice structure built from ions with a 2+ and a 2- charge?",
+                opts: ["NaCl", "CaCl₂", "Na₂O", "MgO"], correct: 3,
+                explain: "MgO is composed of Mg²⁺ and O²⁻ ions. NaCl uses 1+/1- charges, CaCl₂ uses 2+/1- charges, and Na₂O uses 1+/2- charges."
+            },
+            {
+                q: "13. What is the correct name for the compound Fe₂(SO₄)₃?",
+                opts: ["Iron(II) sulphate", "Iron(III) sulphate", "Diiron trisulphate", "Iron sulphite"], correct: 1,
+                explain: "Sulphate is SO₄²⁻. Three sulphate ions contribute a total charge of 6-. For the compound to be neutral, the two iron ions must have a combined charge of 6+, meaning each is Fe³⁺, or Iron(III)."
+            },
+            {
+                q: "14. What type of chemical bond holds the particles together in a crystal of Calcium Fluoride (CaF₂)?",
+                opts: ["Covalent sharing bonds", "Electrostatic forces of attraction between Ca²⁺ and F⁻ ions", "Metallic sea of electrons interaction", "Van der Waals forces"],
+                correct: 1,
+                explain: "Ionic bonding is defined as the strong electrostatic attraction between oppositely charged ions (cations and anions)."
+            },
+            {
+                q: "15. An ion represented as ³⁹K⁺ contains how many protons, neutrons, and electrons?",
+                opts: ["19 p, 20 n, 19 e", "19 p, 20 n, 18 e", "19 p, 19 n, 18 e", "20 p, 19 n, 19 e"], correct: 1,
+                explain: "Potassium has 19 protons. The number of neutrons = 39 - 19 = 20. The 1+ charge means it has lost 1 electron, leaving it with 18 electrons (19 - 1)."
+            },
+            {
+                q: "16. Which property is typical of a substance with a giant ionic lattice structure?",
+                opts: ["Low melting point", "High volatility", "High melting point", "Solubility in non-polar solvents like hexane"],
+                correct: 2,
+                explain: "Giant ionic structures are held together by strong electrostatic attractions extending throughout the lattice. Breaking these requires significant energy, resulting in high melting and boiling points."
+            },
+            {
+                q: "17. An element X reacts with chlorine to form a compound with the formula XCl₃. To which group does element X belong?",
+                opts: ["Group I", "Group II", "Group III", "Group V"], correct: 2,
+                explain: "Chloride ions carry a 1- charge (Cl⁻). Three chloride ions have a total charge of 3-. Therefore, X must form an X³⁺ cation, placing it in Group III."
+            },
+            {
+                q: "18. What is the total number of electrons in one Phosphide ion (P³⁻)?",
+                opts: ["5", "8", "15", "18"], correct: 3,
+                explain: "Phosphorus has an atomic number of 15. The 3- charge indicates it has gained 3 electrons, giving a total of 15 + 3 = 18 electrons."
+            },
+            {
+                q: "19. Which of the following contains polyatomic ions?",
+                opts: ["AlCl₃", "NaOH", "MgO", "CaF₂"], correct: 1,
+                explain: "NaOH contains the Hydroxide ion (OH⁻), which is a polyatomic ion composed of covalently bonded oxygen and hydrogen atoms carrying a net negative charge."
+            },
+            {
+                q: "20. In a cross-and-dot electron diagram of Lithium Fluoride (LiF), how many gained electrons are shown in the fluorine ion's valence shell?",
+                opts: ["1 electron (drawn as a cross)", "2 electrons", "7 electrons", "8 electrons"], correct: 0,
+                explain: "Fluorine naturally has 7 valence electrons. It gains 1 electron from Lithium to complete its octet, so only 1 gained electron (cross) is drawn alongside its 7 original dots."
+            }
+        ];
+
+        let activeTab = 'simulator';
+        let currentQuizIdx = 0;
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            ['simulator', 'quiz'].forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "px-5 py-3 text-sm font-bold uppercase tracking-wider border-b-4 border-transparent text-slate-500 hover:text-slate-800 transition-all";
+            });
+            document.getElementById(`panel-${tabId}`).classList.remove('hidden');
+            const activeColor = tabId === 'simulator' ? 'border-teal-600 text-teal-600' : 'border-amber-500 text-amber-500';
+            document.getElementById(`tab-${tabId}`).className = `px-5 py-3 text-sm font-bold uppercase tracking-wider border-b-4 ${activeColor}`;
+        }
+
+        // --- DRAWING ENGINE: SVG GENERATOR WITH FIXED PAIRED ANGLES ---
+        function runSimulation() {
+            const mKey = document.getElementById('metal-selector').value;
+            const nmKey = document.getElementById('nonmetal-selector').value;
+            
+            const cat = metalData[mKey];
+            const ani = nonmetalData[nmKey];
+            
+            // Update labels dynamically to show names of the ions
+            document.getElementById('lbl-cation-name').innerText = cat.ionName;
+            document.getElementById('lbl-anion-name').innerText = ani.ionName;
+            
+            // Generate standard compound ratios dynamically
+            const mCharge = getValenceCharge(mKey);
+            const nmCharge = getAnionCharge(nmKey);
+            const lcm = getLcm(mCharge, nmCharge);
+            
+            const mCoeff = lcm / mCharge;
+            const nmCoeff = lcm / nmCharge;
+
+            // Generate formula text
+            let formulaStr = mKey;
+            if (mCoeff > 1) formulaStr += `<sub>${mCoeff}</sub>`;
+            formulaStr += nmKey;
+            if (nmCoeff > 1) formulaStr += `<sub>${nmCoeff}</sub>`;
+            
+            document.getElementById('txt-predicted-formula').innerHTML = formulaStr;
+            document.getElementById('txt-ion-ratio').innerText = `Ratio ${mCoeff} : ${nmCoeff}`;
+            document.getElementById('txt-sim-notes').innerText = `To maintain electrical neutrality, ${mCoeff} atom(s) of ${mKey} transfer valence electrons to fill the shell of ${nmCoeff} atom(s) of ${nmKey}.`;
+
+            renderIonSVG('svg-cation', cat, true, ani.originalElectrons, mCoeff);
+            renderIonSVG('svg-anion', ani, false, ani.originalElectrons, nmCoeff);
+        }
+
+        function renderIonSVG(svgId, data, isCation, originalElectronsCount, coeff) {
+            const svg = document.getElementById(svgId);
+            svg.innerHTML = "";
+            
+            const cx = 150, cy = 120;
+
+            // 1. Large Preceding Coefficient Text
+            if (coeff > 1) {
+                const coeffTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                coeffTxt.setAttribute("x", 15);
+                coeffTxt.setAttribute("y", cy + 20);
+                coeffTxt.setAttribute("class", "fill-slate-800 font-sans text-6xl font-black");
+                coeffTxt.textContent = coeff;
+                svg.appendChild(coeffTxt);
+            }
+
+            // 2. Central Symbol Core
+            const nuc = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            nuc.setAttribute("cx", cx); nuc.setAttribute("cy", cy); nuc.setAttribute("r", 22);
+            nuc.setAttribute("class", isCation ? "fill-white stroke-teal-600 stroke-2 shadow" : "fill-white stroke-pink-600 stroke-2 shadow");
+            svg.appendChild(nuc);
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", cx); text.setAttribute("y", cy + 6);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("class", "fill-slate-800 font-mono text-sm font-black");
+            text.textContent = data.symbol;
+            svg.appendChild(text);
+
+            // 3. Square Bracket Framework
+            const bxStart = 65, bxEnd = 225, byTop = 25, byBot = 215;
+            
+            const lBrac = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            lBrac.setAttribute("d", `M ${bxStart+15} ${byTop} L ${bxStart} ${byTop} L ${bxStart} ${byBot} L ${bxStart+15} ${byBot}`);
+            lBrac.setAttribute("class", "fill-none stroke-slate-400 stroke-[3px]");
+            svg.appendChild(lBrac);
+
+            const rBrac = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            rBrac.setAttribute("d", `M ${bxEnd-15} ${byTop} L ${bxEnd} ${byTop} L ${bxEnd} ${byBot} L ${bxEnd-15} ${byBot}`);
+            rBrac.setAttribute("class", "fill-none stroke-slate-400 stroke-[3px]");
+            svg.appendChild(rBrac);
+
+            // 4. Large Charge Values
+            const chargeTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            chargeTxt.setAttribute("x", bxEnd + 8); 
+            chargeTxt.setAttribute("y", byTop + 28);
+            chargeTxt.setAttribute("class", "fill-amber-600 font-mono text-2xl font-black tracking-wide");
+            chargeTxt.textContent = data.charge;
+            svg.appendChild(chargeTxt);
+
+            // 5. Outer Valence Orbit Ring
+            const radius = 62;
+            const orbit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            orbit.setAttribute("cx", cx); orbit.setAttribute("cy", cy); orbit.setAttribute("r", radius);
+            orbit.setAttribute("class", "fill-none stroke-slate-300 stroke-1 stroke-dashed");
+            svg.appendChild(orbit);
+
+            // 6. Plot Configurations (Cations = Empty Shell, Anions = Structured Pairs)
+            if (!isCation) {
+                // Paired coordinates structured as Top, Right, Bottom, Left quadrants
+                const pairedAngles = [
+                    // Top pair
+                    -Math.PI/2 - 0.12, -Math.PI/2 + 0.12,
+                    // Right pair
+                    0 - 0.12, 0 + 0.12,
+                    // Bottom pair
+                    Math.PI/2 - 0.12, Math.PI/2 + 0.12,
+                    // Left pair
+                    Math.PI - 0.12, Math.PI + 0.12
+                ];
+
+                for (let i = 0; i < 8; i++) {
+                    const angle = pairedAngles[i];
+                    const ex = cx + radius * Math.cos(angle);
+                    const ey = cy + radius * Math.sin(angle);
+
+                    // Distinguish native elements (dots) from incoming transfers (crosses)
+                    if (i < originalElectronsCount) {
+                        drawSymbol(svg, ex, ey, "dot", "fill-pink-600");
+                    } else {
+                        drawSymbol(svg, ex, ey, "cross", "stroke-teal-600");
+                    }
+                }
+            }
+        }
+
+        function drawSymbol(svg, x, y, type, colorClass) {
+            if (type === "dot") {
+                const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                dot.setAttribute("cx", x); dot.setAttribute("cy", y); dot.setAttribute("r", 5);
+                dot.setAttribute("class", colorClass);
+                svg.appendChild(dot);
+            } else {
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                const l1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                l1.setAttribute("x1", x-5); l1.setAttribute("y1", y-5); l1.setAttribute("x2", x+5); l1.setAttribute("y2", y+5);
+                l1.setAttribute("class", `${colorClass} stroke-[3px]`);
+                const l2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                l2.setAttribute("x1", x+5); l2.setAttribute("y1", y-5); l2.setAttribute("x2", x-5); l2.setAttribute("y2", y+5);
+                l2.setAttribute("class", `${colorClass} stroke-[3px]`);
+                g.appendChild(l1); g.appendChild(l2);
+                svg.appendChild(g);
+            }
+        }
+
+        // --- QUIZ DATA DECK DISPATCHER ---
+        function renderQuizQuestion() {
+            document.getElementById('quiz-q-index').innerText = `Question ${currentQuizIdx + 1} / ${assessmentDeck.length}`;
+            const target = assessmentDeck[currentQuizIdx];
+            document.getElementById('quiz-question-text').innerText = target.q;
+
+            const box = document.getElementById('quiz-options-box');
+            box.innerHTML = "";
+            document.getElementById('quiz-feedback').className = "text-sm text-slate-500 font-medium italic";
+            document.getElementById('quiz-feedback').innerText = "Select an answer choice to display structural breakdown.";
+
+            target.opts.forEach((txt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 bg-white hover:bg-slate-100 border-2 border-slate-200 rounded-xl text-sm font-bold transition-all text-slate-700 flex items-center gap-3 shadow-sm hover:shadow";
+                btn.innerHTML = `<span class="bg-slate-100 px-2.5 py-1 rounded border border-slate-300 font-mono font-bold text-teal-700">${String.fromCharCode(65 + idx)}</span> <span class="flex-1">${txt}</span>`;
+                btn.onclick = () => verifyQuizAnswer(idx);
+                box.appendChild(btn);
+            });
+        }
+
+        function verifyQuizAnswer(choice) {
+            const target = assessmentDeck[currentQuizIdx];
+            const fb = document.getElementById('quiz-feedback');
+
+            if (choice === target.correct) {
+                fb.innerHTML = `🏆 <b>Correct Choice!</b><br><span class="text-emerald-800 mt-1 block">${target.explain}</span>`;
+                fb.className = "text-sm text-emerald-800 border-2 border-emerald-200 p-4 rounded-xl bg-emerald-50 font-medium";
+                setTimeout(() => {
+                    currentQuizIdx = (currentQuizIdx + 1) % assessmentDeck.length;
+                    renderQuizQuestion();
+                }, 4000);
+            } else {
+                fb.innerHTML = `⚠️ <b>Incorrect Answer.</b> Review curriculum parameters:<br><span class="text-rose-800 mt-1 block">${target.explain}</span>`;
+                fb.className = "text-sm text-rose-800 border-2 border-rose-200 p-4 rounded-xl bg-rose-50 font-medium";
+            }
+        }
+
+        window.onload = () => {
+            runSimulation();
+            renderQuizQuestion();
+        };
+    </script>
+</body>
+</html>
